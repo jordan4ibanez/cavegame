@@ -130,12 +130,31 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 
 		-- Cave carving.
 		if (pos.y <= 160) then
+			local hit = false
+
 			-- Big caves.
 			if big_cave_noise[index] > 0.5 then
 				data[i] = c_air
+				hit = true
 			elseif -- Small caves. (Terrain accentuation)
 				small_cave_noise[index] > 0.55 then
 				data[i] = c_air
+				hit = true
+			end
+
+			if hit then
+				-- Check if dirt so that there isn't a bunch of dirt all over the place on the surface.
+				local possible_dirt_index = area:index(pos.x, pos.y - 1, pos.z)
+
+				local grass_check_1 = area:index(pos.x, pos.y + 1, pos.z)
+				local grass_check_2 = area:index(pos.x, pos.y + 2, pos.z)
+
+				if data[possible_dirt_index] == c_dirt then
+					-- Prevent double grass.
+					if data[grass_check_1] ~= c_grass and data[grass_check_2] ~= c_grass then
+						data[possible_dirt_index] = c_grass
+					end
+				end
 			end
 		end
 
