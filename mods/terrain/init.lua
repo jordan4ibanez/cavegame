@@ -1,17 +1,5 @@
--- Terrain generation.
+-- Terrain generation entry point.
 
---- @type number
-local chunk_size = core.get_mapgen_chunksize()
-
---- This is the terrain generation entry point.
----@param minp number
----@param maxp number
----@param blockseed number
-core.register_on_generated(function(minp, maxp, blockseed)
-	-- print(minp, maxp, blockseed)
-
-	--- @type userdata, number, number
-	local vm, emin, emax = core.get_mapgen_object("voxelmanip")
-
-	local area = VoxelArea:new { MinEdge = emin, MaxEdge = emax }
-end)
+core.register_mapgen_script(
+	core.get_modpath(core.get_current_modname()) .. "/mapgen.lua"
+)
