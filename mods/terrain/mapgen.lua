@@ -41,13 +41,11 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 	}
 
 	local value_noise_2d       = {}
-
 	local __value_noise_map_2d = core.get_value_noise_map(noise_parameters, __constant_area_2d)
 	__value_noise_map_2d:get_2d_map_flat(minp, value_noise_2d)
 
 
-
-	--- @type number, number
+	--- @type table, table
 	local emin, emax = voxmanip:get_emerged_area()
 
 	local data = {}
@@ -58,6 +56,9 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 
 	local index = 1
 
+	local width = (maxp.x - minp.x) + 1
+	local depth = (maxp.z - minp.z) + 1
+
 	-- Use the much faster flat iterator.
 	-- Utilize cpu cache linearly. (Or attempt to)
 	-- Important note: z,y,x
@@ -66,21 +67,38 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 
 		--- Overworld terrain is shifted up to allow mountains to go into the clouds.
 		if (pos.y >= 0 and pos.y <= 160) then
-			data[i] = c_dirt
-		end
+			-- Zero indices.
+			local x_in_data = pos.x - minp.x
+			local z_in_data = pos.z - minp.z
 
+			-- Basically shove a 3D space into a 1D space.
+			local index_2d = (x_in_data * width) + z_in_data + 1
 
-		if value_noise_3d[index] > 0.1 then
-			data[i] = c_dirt
-		else
-			-- This puts grass on top
-			pos.y = pos.y - 1
-			local below_index = area:indexp(pos)
+			local raw_noise = value_noise_2d[index_2d]
 
-			if data[below_index] == c_dirt then
-				data[below_index] = c_grass
+			if (raw_noise == nil) then
+				error("terrain generation error at index: " .. tostring(index_2d))
 			end
+
+			print(raw_noise)
+
+			-- print(value_noise_2d[index_2d])
+
+			data[i] = c_dirt
 		end
+
+
+		-- if value_noise_3d[index] > 0.1 then
+		-- 	data[i] = c_dirt
+		-- else
+		-- 	-- This puts grass on top
+		-- 	pos.y = pos.y - 1
+		-- 	local below_index = area:indexp(pos)
+
+		-- 	if data[below_index] == c_dirt then
+		-- 		data[below_index] = c_grass
+		-- 	end
+		-- end
 
 		index = index + 1
 	end
