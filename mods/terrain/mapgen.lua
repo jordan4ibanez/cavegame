@@ -49,7 +49,7 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 	local index = 1
 
 	-- Use the much faster flat iterator.
-	-- Utilize cpu cache linearly.
+	-- Utilize cpu cache linearly. (Or attempt to)
 	-- Important note: z,y,x
 	for i in area:iterp(minp, maxp) do
 		local pos = area:position(i)
