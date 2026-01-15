@@ -18,10 +18,10 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 	local noise_parameters_3d  = {
 		offset = 0,
 		scale = 1,
-		spread = { x = 200, y = 100, z = 200 },
+		spread = { x = 15, y = 15, z = 15 },
 		seed = tonumber(core.get_mapgen_setting("seed")) or math.random(0, 999999999),
-		octaves = 5,
-		persist = 0.63,
+		octaves = 1,
+		persist = 0.01,
 		lacunarity = 2.0,
 	}
 
@@ -92,12 +92,9 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 
 			-- Amplitude in nodes.
 			local amplitude = 80
-
 			local base = 80
 
 			local height_at_xz = base + (amplitude * raw_noise)
-
-			-- print((amplitude * raw_noise))
 
 			if (pos.y <= height_at_xz) then
 				data[i] = c_dirt
@@ -106,6 +103,14 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 			-- print(raw_noise)
 
 			-- print(value_noise_2d[index_2d])
+		end
+
+		-- Cave carving.
+		if (pos.y <= 160) then
+			-- print(value_noise_3d[index])
+			if value_noise_3d[index] > 0.5 then
+				data[i] = c_air
+			end
 		end
 
 
