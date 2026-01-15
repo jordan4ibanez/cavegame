@@ -15,7 +15,7 @@ local c_grass = core.get_content_id("infdev:grass")
 core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 	-- print(minp, maxp, blockseed)
 
-	local noise_parameters_3d  = {
+	local big_cave_noise_parameters  = {
 		offset = 0,
 		scale = 1,
 		spread = { x = 15, y = 15, z = 15 },
@@ -25,7 +25,7 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 		lacunarity = 2.0,
 	}
 
-	local noise_parameters_2d  = {
+	local overworld_terrain_noise_parameters  = {
 		offset = 0,
 		scale = 0.5,
 		spread = { x = 250, y = 250, z = 250 },
@@ -41,9 +41,9 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 		z = (maxp.z - minp.z) + 1
 	}
 
-	local value_noise_3d       = {}
-	local __value_noise_map_3d = core.get_value_noise_map(noise_parameters_3d, __constant_area_3d)
-	__value_noise_map_3d:get_3d_map_flat(minp, value_noise_3d)
+	local big_cave_noise       = {}
+	local __big_cave_noise_map_3d = core.get_value_noise_map(big_cave_noise_parameters, __constant_area_3d)
+	__big_cave_noise_map_3d:get_3d_map_flat(minp, big_cave_noise)
 
 	local __constant_area_2d = {
 		x = (maxp.x - minp.x) + 1,
@@ -51,9 +51,9 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 	}
 
 
-	local value_noise_2d       = {}
-	local __value_noise_map_2d = core.get_value_noise_map(noise_parameters_2d, __constant_area_2d)
-	__value_noise_map_2d:get_2d_map_flat({ x = minp.x, y = minp.z }, value_noise_2d)
+	local overworld_terrain_noise       = {}
+	local __overworld_terrain_noise_map_2d = core.get_value_noise_map(overworld_terrain_noise_parameters, __constant_area_2d)
+	__overworld_terrain_noise_map_2d:get_2d_map_flat({ x = minp.x, y = minp.z }, overworld_terrain_noise)
 
 	--- @type table, table
 	local emin, emax = voxmanip:get_emerged_area()
@@ -84,7 +84,7 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 			-- Basically shove a 3D space into a 1D space.
 			local index_2d = (z_in_data * depth) + x_in_data + 1
 
-			local raw_noise = value_noise_2d[index_2d]
+			local raw_noise = overworld_terrain_noise[index_2d]
 
 			if (raw_noise == nil) then
 				error("terrain generation error at index: " .. tostring(index_2d))
@@ -107,8 +107,8 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 
 		-- Cave carving.
 		if (pos.y <= 160) then
-			-- print(value_noise_3d[index])
-			if value_noise_3d[index] > 0.5 then
+			-- Big caves.
+			if big_cave_noise[index] > 0.5 then
 				data[i] = c_air
 			end
 		end
