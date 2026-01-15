@@ -4,6 +4,7 @@
     "VoxelArea",
     "infdev",
     "dump",
-    "dump2"
+    "dump2",
+    "vector"
   ]
 }
