@@ -33,11 +33,11 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 		z = (maxp.z - minp.z) + 1
 	}
 
-	local constant_perlin = core.get_value_noise_map(noise_parameters, constant_area)
+	local __value_noise_map_3d = core.get_value_noise_map(noise_parameters, constant_area)
 
-	local density_noise   = {}
+	local value_noise_3d   = {}
 
-	constant_perlin:get_3d_map_flat(minp, density_noise)
+	__value_noise_map_3d:get_3d_map_flat(minp, value_noise_3d)
 
 	--- @type number, number
 	local emin, emax = voxmanip:get_emerged_area()
@@ -62,7 +62,7 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 		end
 
 
-		if density_noise[index] > 0.1 then
+		if value_noise_3d[index] > 0.1 then
 			data[i] = c_dirt
 		else
 			-- This puts grass on top
