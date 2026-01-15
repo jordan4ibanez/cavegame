@@ -37,7 +37,7 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 
 	local __constant_area_2d   = {
 		x = (maxp.x - minp.x) + 1,
-		z = (maxp.z - minp.z) + 1
+		y = (maxp.z - minp.z) + 1
 	}
 
 	local value_noise_2d       = {}
