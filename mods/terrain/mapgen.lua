@@ -50,7 +50,6 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 		y = (maxp.z - minp.z) + 1
 	}
 
-	local __value_noise_map_2d = core.get_value_noise_map(noise_parameters, __constant_area_2d)
 
 	local value_noise_2d       = {}
 	local __value_noise_map_2d = core.get_value_noise_map(noise_parameters_2d, __constant_area_2d)
@@ -83,7 +82,7 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 			local z_in_data = pos.z - minp.z
 
 			-- Basically shove a 3D space into a 1D space.
-			local index_2d = (x_in_data * width) + z_in_data + 1
+			local index_2d = (z_in_data * depth) + x_in_data + 1
 
 			local raw_noise = value_noise_2d[index_2d]
 
