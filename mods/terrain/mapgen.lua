@@ -25,6 +25,16 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 		lacunarity = 2.0,
 	}
 
+	local small_cave_noise_parameters  = {
+		offset = 0,
+		scale = 1,
+		spread = { x = 15, y = 15, z = 15 },
+		seed = tonumber(core.get_mapgen_setting("seed")) or math.random(0, 999999999),
+		octaves = 1,
+		persist = 0.01,
+		lacunarity = 2.0,
+	}
+
 	local overworld_terrain_noise_parameters  = {
 		offset = 0,
 		scale = 0.5,
