@@ -1,3 +1,8 @@
 {
-  "Lua.diagnostics.globals": ["core", "VoxelArea", "infdev"]
+  "Lua.diagnostics.globals": [
+    "core",
+    "VoxelArea",
+    "infdev",
+    "dump"
+  ]
 }
