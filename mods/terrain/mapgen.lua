@@ -1,5 +1,7 @@
 print("test")
 
+local ceil = math.ceil
+
 --- @type number
 local chunk_size = core.get_mapgen_chunksize()
 
@@ -110,9 +112,10 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 			local amplitude = 80
 			local base = 80
 
-			local height_at_xz = base + (amplitude * raw_noise)
+			local height_at_xz = ceil(base + (amplitude * raw_noise))
 
-			if (pos.y <= height_at_xz) then
+
+			if (pos.y < height_at_xz) then
 				data[i] = c_dirt
 			end
 
