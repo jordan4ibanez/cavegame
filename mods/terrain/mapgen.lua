@@ -185,8 +185,8 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 		index = index + 1
 	end
 
-	voxmanip:calc_lighting()
 	voxmanip:set_data(data)
+	voxmanip:calc_lighting()
 	voxmanip:update_liquids()
 
 	-- vm:write_to_map()
