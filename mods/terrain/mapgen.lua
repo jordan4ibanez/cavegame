@@ -97,6 +97,7 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 
 
 		--- Overworld terrain is shifted up to allow mountains to go into the clouds.
+		--- The overworld is a 2D height map. It is polled in 3D space.
 		if (pos.y >= 0 and pos.y <= 160) then
 			-- Zero indices.
 			local x_in_data = pos.x - minp.x
