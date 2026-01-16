@@ -12,7 +12,7 @@ local c_grass = core.get_content_id("infdev:grass")
 local c_water_source = core.get_content_id("infdev:water_source")
 local c_sand = core.get_content_id("infdev:sand")
 
-local ocean_level = 80
+local ocean_level = 60
 
 --- This is the terrain generation entry point.
 ---@param minp table
