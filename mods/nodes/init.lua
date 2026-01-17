@@ -17,7 +17,6 @@ infdev.register_node("dirt", {
 	tiles = { "default_dirt.png" }
 })
 
-
 infdev.register_node("grass", {
 	tiles = {
 		"default_grass.png",
@@ -31,6 +30,14 @@ infdev.register_node("grass", {
 
 infdev.register_node("sand", {
 	tiles = { "default_sand.png" }
+})
+
+infdev.register_node("coal", {
+	tiles = { "default_stone.png^default_mineral_coal.png" },
+})
+
+infdev.register_node("iron", {
+	tiles = { "default_stone.png^default_mineral_iron.png" },
 })
 
 infdev.register_node("water_source", {
