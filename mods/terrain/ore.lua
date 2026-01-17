@@ -45,7 +45,7 @@ infdev.register_ore({
 	clust_scarcity = 14,
 	clust_num_ores = 5,
 	clust_size     = 3,
-	y_max          = -32,
+	y_max          = -128,
 	y_min          = -1023,
 })
 
@@ -57,7 +57,7 @@ infdev.register_ore({
 	clust_scarcity = 15,
 	clust_num_ores = 7,
 	clust_size     = 3,
-	y_max          = -64,
+	y_max          = -256,
 	y_min          = -1023,
 })
 
@@ -68,7 +68,7 @@ infdev.register_ore({
 	clust_scarcity = 18,
 	clust_num_ores = 7,
 	clust_size     = 3,
-	y_max          = -128,
+	y_max          = -384,
 	y_min          = -1023,
 })
 
@@ -79,7 +79,7 @@ infdev.register_ore({
 	clust_scarcity = 20,
 	clust_num_ores = 7,
 	clust_size     = 3,
-	y_max          = -256,
+	y_max          = -448,
 	y_min          = -1023,
 })
 
@@ -90,6 +90,6 @@ infdev.register_ore({
 	clust_scarcity = 22,
 	clust_num_ores = 7,
 	clust_size     = 3,
-	y_max          = -384,
+	y_max          = -512,
 	y_min          = -1023,
 })
