@@ -9,13 +9,13 @@ this should have a 3 phase cave creator
 
 possible river maker but that's not necessary
 
-coal and iron first layer = 128 down
++- coal and iron first layer = 128 down
 
-gold = -32 down
++- gold = -32 down
 
-diamond = -64 down
++- diamond = -64 down
 
-ruby = -128 down
++- ruby = -128 down
 
 sapphire = -256 down
 
