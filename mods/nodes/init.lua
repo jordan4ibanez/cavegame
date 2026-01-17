@@ -2,10 +2,15 @@
 
 infdev = infdev or {}
 
+local debug_mode = true
+
 --- Custom node registration.
 ---@param name string
 ---@param definition table
 function infdev.register_node(name, definition)
+	if (debug_mode) then
+		definition.light_source = 14
+	end
 	core.register_node(":infdev:" .. name, definition)
 end
 
