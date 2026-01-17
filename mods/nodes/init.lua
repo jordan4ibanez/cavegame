@@ -80,6 +80,11 @@ infdev.register_node("bedrock", {
 	tiles = { "default_stone.png^[contrast:100:-15" }
 })
 
+infdev.register_node("sandstone", {
+	tiles = { "default_sandstone.png" }
+})
+
+
 infdev.register_node("water_source", {
 	description = "Water Source",
 	drawtype = "liquid",

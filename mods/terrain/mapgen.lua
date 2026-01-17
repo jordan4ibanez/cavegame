@@ -12,6 +12,7 @@ local c_grass = core.get_content_id("infdev:grass")
 local c_water_source = core.get_content_id("infdev:water_source")
 local c_sand = core.get_content_id("infdev:sand")
 local c_bedrock = core.get_content_id("infdev:bedrock")
+local c_sandstone = core.get_content_id("infdev:sandstone")
 
 local ocean_level = 60
 
@@ -132,9 +133,14 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 			elseif (pos.y < height_at_xz and pos.y >= height_at_xz - 2) then
 				data[i] = (is_sandy and c_sand) or c_dirt
 			elseif (pos.y < height_at_xz) then
-				-- TODO: Sandstone calculation?
 				if (not stone_disabled) then
-					data[i] = c_stone
+					local is_sandstone = height_at_xz <= ocean_level + 3 and pos.y >= height_at_xz - 7
+
+					if (is_sandstone) then
+						data[i] = c_sandstone
+					else
+						data[i] = c_stone
+					end
 				end
 			end
 
