@@ -14,6 +14,8 @@ local c_sand = core.get_content_id("infdev:sand")
 
 local ocean_level = 60
 
+local stone_disabled = true
+
 --- This is the terrain generation entry point.
 ---@param minp table
 ---@param maxp table
@@ -130,7 +132,9 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 				data[i] = (is_sandy and c_sand) or c_dirt
 			elseif (pos.y < height_at_xz) then
 				-- TODO: Sandstone calculation?
-				data[i] = c_stone
+				if (not stone_disabled) then
+					data[i] = c_stone
+				end
 			end
 
 			-- print(raw_noise)
