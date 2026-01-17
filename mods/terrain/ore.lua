@@ -93,3 +93,14 @@ infdev.register_ore({
 	y_max          = -512,
 	y_min          = -1023,
 })
+
+infdev.register_ore({
+	ore_type       = "scatter",
+	ore            = "infdev:lapis",
+	wherein        = "infdev:stone",
+	clust_scarcity = 22,
+	clust_num_ores = 7,
+	clust_size     = 3,
+	y_max          = -640,
+	y_min          = -1023,
+})

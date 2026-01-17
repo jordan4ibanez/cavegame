@@ -21,7 +21,7 @@ possible river maker but that's not necessary
 
 +- emerald = -512 down
 
-lapis lazuli = -640 down
++- lapis lazuli = -640 down
 
 moonstone = -768 down
 
