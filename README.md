@@ -19,7 +19,7 @@ possible river maker but that's not necessary
 
 +- sapphire = -256 down
 
-emerald = -384 down
++- emerald = -384 down
 
 lapis lazuli = -448 down
 
