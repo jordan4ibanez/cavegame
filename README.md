@@ -17,7 +17,7 @@ possible river maker but that's not necessary
 
 +- ruby = -128 down
 
-sapphire = -256 down
++- sapphire = -256 down
 
 emerald = -384 down
 
