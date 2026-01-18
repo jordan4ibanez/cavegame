@@ -1,11 +1,11 @@
 # cavegame
  cave game
 
-layers overlap downwards
++- layers overlap downwards
 
-overworld mountain carver = 160-32
++- overworld mountain carver = 160-32
 
-this should have a 3 phase cave creator
++- this should have a 3 phase cave creator
 
 possible river maker but that's not necessary
 
@@ -25,4 +25,4 @@ possible river maker but that's not necessary
 
 +- moonstone = -768 down
 
-bedrock = -1024
++- bedrock = -1024
