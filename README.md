@@ -1,6 +1,15 @@
 # cavegame
  cave game
 
+Tree and leaves - spawns on grass
+
+cactus - spawns on sand
+
+sugarcane - spawns on sand next to water
+
+
+# 0.0.0 - The ground.
+
 +- layers overlap downwards
 
 +- overworld mountain carver = 160-32
