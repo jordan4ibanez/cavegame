@@ -18,6 +18,13 @@ local ocean_level = 60
 
 local stone_disabled = false
 
+local function clamp(input, low, high)
+	if low > high then
+		low, high = high, low
+	end
+	return math.max(low, math.min(high, input))
+end
+
 --- This is the terrain generation entry point.
 ---@param minp table
 ---@param maxp table
@@ -43,6 +50,16 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 		octaves = 1,
 		persist = 0.1,
 		lacunarity = 3,
+	}
+
+	local overworld_terrain_blend_parameters       = {
+		offset = 0,
+		scale = 1,
+		spread = { x = 500, y = 500, z = 500 },
+		seed = tonumber(core.get_mapgen_setting("seed")) + 111 or math.random(0, 999999999),
+		octaves = 2,
+		persist = 1.0,
+		lacunarity = 2.0,
 	}
 
 	local overworld_terrain_noise_parameters_big   = {
@@ -81,10 +98,16 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 	local __small_cave_noise_map_3d = core.get_value_noise_map(small_cave_noise_parameters, __constant_area_3d)
 	__small_cave_noise_map_3d:get_3d_map_flat(minp, small_cave_noise)
 
-	local __constant_area_2d = {
+	local __constant_area_2d                     = {
 		x = (maxp.x - minp.x) + 1,
 		y = (maxp.z - minp.z) + 1
 	}
+
+	local overworld_terrain_blend_noise          = {}
+	local __overworld_terrain_blend_noise_map_2d = core.get_value_noise_map(overworld_terrain_blend_parameters,
+		__constant_area_2d)
+	__overworld_terrain_blend_noise_map_2d:get_2d_map_flat({ x = minp.x, y = minp.z },
+		overworld_terrain_blend_noise)
 
 
 	local overworld_terrain_noise_big          = {}
@@ -131,7 +154,15 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 			-- Basically shove a 3D space into a 1D space.
 			local index_2d = (z_in_data * depth) + x_in_data + 1
 
-			local raw_noise = (overworld_terrain_noise_big[index_2d] + overworld_terrain_noise_small[index_2d]) / 2
+			local skew = (clamp(-1, 1, overworld_terrain_blend_noise[index_2d]) + 1) * 0.5
+
+			local big_noise_multiplier = 1 - skew
+			local small_noise_multiplier = skew
+
+			local raw_noise = (
+				(overworld_terrain_noise_big[index_2d] * big_noise_multiplier) +
+				(overworld_terrain_noise_small[index_2d] * small_noise_multiplier)
+			)
 
 			if (raw_noise == nil) then
 				error("terrain generation error at index: " .. tostring(index_2d))
