@@ -25,7 +25,7 @@ local stone_disabled = false
 core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 	-- print(minp, maxp, blockseed)
 
-	local big_cave_noise_parameters          = {
+	local big_cave_noise_parameters                = {
 		offset = 0,
 		scale = 1,
 		spread = { x = 25, y = 25, z = 25 },
@@ -35,7 +35,7 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 		lacunarity = 6.0,
 	}
 
-	local small_cave_noise_parameters        = {
+	local small_cave_noise_parameters              = {
 		offset = 0,
 		scale = 1,
 		spread = { x = 7, y = 7, z = 7 },
@@ -45,24 +45,35 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 		lacunarity = 3,
 	}
 
-	local overworld_terrain_noise_parameters = {
+	local overworld_terrain_noise_parameters_big   = {
 		offset = 0,
 		scale = 0.5,
-		spread = { x = 200, y = 250, z = 200 },
+		spread = { x = 500, y = 400, z = 500 },
 		seed = tonumber(core.get_mapgen_setting("seed")) or math.random(0, 999999999),
-		octaves = 5,
+		octaves = 4,
 		persist = 0.63,
 		lacunarity = 2.0,
 	}
 
-	local __constant_area_3d                 = {
+	local overworld_terrain_noise_parameters_small = {
+		offset = 0,
+		scale = 0.5,
+		spread = { x = 25, y = 300, z = 25 },
+		seed = tonumber(core.get_mapgen_setting("seed")) or math.random(0, 999999999),
+		octaves = 2,
+		persist = 0.3,
+		lacunarity = 7.0,
+	}
+
+	local __constant_area_3d                       = {
 		x = (maxp.x - minp.x) + 1,
 		y = (maxp.y - minp.y) + 1,
 		z = (maxp.z - minp.z) + 1
 	}
 
-	local big_cave_noise                     = {}
-	local __big_cave_noise_map_3d            = core.get_value_noise_map(big_cave_noise_parameters, __constant_area_3d)
+	local big_cave_noise                           = {}
+	local __big_cave_noise_map_3d                  = core.get_value_noise_map(big_cave_noise_parameters,
+		__constant_area_3d)
 	__big_cave_noise_map_3d:get_3d_map_flat(minp, big_cave_noise)
 
 
@@ -76,10 +87,16 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 	}
 
 
-	local overworld_terrain_noise          = {}
-	local __overworld_terrain_noise_map_2d = core.get_value_noise_map(overworld_terrain_noise_parameters,
+	local overworld_terrain_noise_big          = {}
+	local __overworld_terrain_noise_map_2d_big = core.get_value_noise_map(overworld_terrain_noise_parameters_big,
 		__constant_area_2d)
-	__overworld_terrain_noise_map_2d:get_2d_map_flat({ x = minp.x, y = minp.z }, overworld_terrain_noise)
+	__overworld_terrain_noise_map_2d_big:get_2d_map_flat({ x = minp.x, y = minp.z }, overworld_terrain_noise_big)
+
+
+	local overworld_terrain_noise_small          = {}
+	local __overworld_terrain_noise_map_2d_small = core.get_value_noise_map(overworld_terrain_noise_parameters_small,
+		__constant_area_2d)
+	__overworld_terrain_noise_map_2d_small:get_2d_map_flat({ x = minp.x, y = minp.z }, overworld_terrain_noise_small)
 
 	--- @type table, table
 	local emin, emax = voxmanip:get_emerged_area()
@@ -114,7 +131,7 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 			-- Basically shove a 3D space into a 1D space.
 			local index_2d = (z_in_data * depth) + x_in_data + 1
 
-			local raw_noise = overworld_terrain_noise[index_2d]
+			local raw_noise = (overworld_terrain_noise_big[index_2d] + overworld_terrain_noise_small[index_2d]) / 2
 
 			if (raw_noise == nil) then
 				error("terrain generation error at index: " .. tostring(index_2d))
@@ -128,20 +145,19 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 
 			local is_sandy = height_at_xz <= ocean_level + 3
 
-			-- if (pos.y == height_at_xz) then
-			-- 	data[i] = (is_sandy and c_sand) or c_grass
-			-- elseif (pos.y < height_at_xz and pos.y >= height_at_xz - 2) then
-			-- 	data[i] = (is_sandy and c_sand) or c_dirt
-			-- else
-			if (pos.y < height_at_xz) then
+			if (pos.y == height_at_xz) then
+				data[i] = (is_sandy and c_sand) or c_grass
+			elseif (pos.y < height_at_xz and pos.y >= height_at_xz - 2) then
+				data[i] = (is_sandy and c_sand) or c_dirt
+			elseif (pos.y < height_at_xz) then
 				if (not stone_disabled) then
-					-- local is_sandstone = height_at_xz <= ocean_level + 3 and pos.y >= height_at_xz - 7
+					local is_sandstone = height_at_xz <= ocean_level + 3 and pos.y >= height_at_xz - 7
 
-					-- if (is_sandstone) then
-					-- 	data[i] = c_sandstone
-					-- else
-					data[i] = c_stone
-					-- end
+					if (is_sandstone) then
+						data[i] = c_sandstone
+					else
+						data[i] = c_stone
+					end
 				end
 			end
 
@@ -188,20 +204,20 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 
 		-- Water generation.
 		-- This is shaky at best and produces weird results along with flooding.
-		-- if (
-		-- 		pos.y <= ocean_level and
-		-- 		pos.y >= 0 and
-		-- 		data[i] == c_air
-		-- 	) then
-		-- 	-- Try not to go too deep into a cave.
-		-- 	-- Don't flood all the above 0 Y caves.
-		-- 	if (
-		-- 			pos.y >= height_at_xz - 3 or
-		-- 			pos.y == ocean_level and height_at_xz < pos.y + 20
-		-- 		) then
-		-- 		data[i] = c_water_source
-		-- 	end
-		-- end
+		if (
+				pos.y <= ocean_level and
+				pos.y >= 0 and
+				data[i] == c_air
+			) then
+			-- Try not to go too deep into a cave.
+			-- Don't flood all the above 0 Y caves.
+			if (
+					pos.y >= height_at_xz - 3 or
+					pos.y == ocean_level and height_at_xz < pos.y + 20
+				) then
+				data[i] = c_water_source
+			end
+		end
 
 
 		-- if value_noise_3d[index] > 0.1 then
