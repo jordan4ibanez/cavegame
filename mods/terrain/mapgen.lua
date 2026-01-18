@@ -32,6 +32,16 @@ end
 core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 	-- print(minp, maxp, blockseed)
 
+	local cave_blend_parameters                    = {
+		offset = 0,
+		scale = 1,
+		spread = { x = 500, y = 500, z = 500 },
+		seed = tonumber(core.get_mapgen_setting("seed")) - 111 or math.random(0, 999999999),
+		octaves = 2,
+		persist = 1.0,
+		lacunarity = 2.0,
+	}
+
 	local big_cave_noise_parameters                = {
 		offset = 0,
 		scale = 1,
@@ -87,6 +97,11 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 		y = (maxp.y - minp.y) + 1,
 		z = (maxp.z - minp.z) + 1
 	}
+
+	local cave_blend_noise                           = {}
+	local __cave_blend_noise_map_3d                  = core.get_value_noise_map(cave_blend_parameters,
+		__constant_area_3d)
+	__cave_blend_noise_map_3d:get_3d_map_flat(minp, cave_blend_noise)
 
 	local big_cave_noise                           = {}
 	local __big_cave_noise_map_3d                  = core.get_value_noise_map(big_cave_noise_parameters,
