@@ -34,8 +34,8 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 
 	local cave_blend_parameters                    = {
 		offset = 0,
-		scale = 1,
-		spread = { x = 500, y = 500, z = 500 },
+		scale = 0.5,
+		spread = { x = 100, y = 100, z = 100 },
 		seed = tonumber(core.get_mapgen_setting("seed")) - 111 or math.random(0, 999999999),
 		octaves = 2,
 		persist = 1.0,
@@ -98,13 +98,13 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 		z = (maxp.z - minp.z) + 1
 	}
 
-	local cave_blend_noise                           = {}
-	local __cave_blend_noise_map_3d                  = core.get_value_noise_map(cave_blend_parameters,
+	local cave_blend_noise                         = {}
+	local __cave_blend_noise_map_3d                = core.get_value_noise_map(cave_blend_parameters,
 		__constant_area_3d)
 	__cave_blend_noise_map_3d:get_3d_map_flat(minp, cave_blend_noise)
 
-	local big_cave_noise                           = {}
-	local __big_cave_noise_map_3d                  = core.get_value_noise_map(big_cave_noise_parameters,
+	local big_cave_noise          = {}
+	local __big_cave_noise_map_3d = core.get_value_noise_map(big_cave_noise_parameters,
 		__constant_area_3d)
 	__big_cave_noise_map_3d:get_3d_map_flat(minp, big_cave_noise)
 
@@ -222,10 +222,18 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 		if (pos.y <= 160) then
 			local hit = false
 
-			local average_noise = (big_cave_noise[index] + small_cave_noise[index]) / 2
+			local skew = (clamp(-1, 1, cave_blend_noise[index]) + 1) * 0.5
+
+			local big_noise_multiplier = 1 - skew
+			local small_noise_multiplier = skew
+
+			local average_noise = (
+				(big_cave_noise[index] * big_noise_multiplier) +
+				(small_cave_noise[index] * small_noise_multiplier)
+			)
 
 
-			if average_noise > 0.3 then
+			if average_noise > 0.4 then
 				data[i] = c_air
 				hit = true
 			end
@@ -259,7 +267,7 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 			-- Don't flood all the above 0 Y caves.
 			if (
 					pos.y >= height_at_xz - 3 or
-					pos.y == ocean_level and height_at_xz < pos.y + 20
+					pos.y == ocean_level and height_at_xz > pos.y
 				) then
 				data[i] = c_water_source
 			end
