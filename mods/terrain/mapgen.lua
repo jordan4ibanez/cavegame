@@ -28,27 +28,27 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 	local big_cave_noise_parameters          = {
 		offset = 0,
 		scale = 1,
-		spread = { x = 15, y = 15, z = 15 },
-		seed = tonumber(core.get_mapgen_setting("seed")) or math.random(0, 999999999),
+		spread = { x = 25, y = 25, z = 25 },
+		seed = math.floor((tonumber(core.get_mapgen_setting("seed")) * math.pi)) or math.random(0, 999999999),
 		octaves = 2,
-		persist = 0.01,
-		lacunarity = 2.0,
+		persist = 0.05,
+		lacunarity = 6.0,
 	}
 
 	local small_cave_noise_parameters        = {
 		offset = 0,
 		scale = 1,
 		spread = { x = 7, y = 7, z = 7 },
-		seed = tonumber(core.get_mapgen_setting("seed")) or math.random(0, 999999999),
+		seed = math.floor((tonumber(core.get_mapgen_setting("seed")) * 1.24)) or math.random(0, 999999999),
 		octaves = 1,
-		persist = 0.005,
-		lacunarity = 1.5,
+		persist = 0.1,
+		lacunarity = 3,
 	}
 
 	local overworld_terrain_noise_parameters = {
 		offset = 0,
 		scale = 0.5,
-		spread = { x = 250, y = 250, z = 250 },
+		spread = { x = 200, y = 250, z = 200 },
 		seed = tonumber(core.get_mapgen_setting("seed")) or math.random(0, 999999999),
 		octaves = 5,
 		persist = 0.63,
@@ -128,19 +128,20 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 
 			local is_sandy = height_at_xz <= ocean_level + 3
 
-			if (pos.y == height_at_xz) then
-				data[i] = (is_sandy and c_sand) or c_grass
-			elseif (pos.y < height_at_xz and pos.y >= height_at_xz - 2) then
-				data[i] = (is_sandy and c_sand) or c_dirt
-			elseif (pos.y < height_at_xz) then
+			-- if (pos.y == height_at_xz) then
+			-- 	data[i] = (is_sandy and c_sand) or c_grass
+			-- elseif (pos.y < height_at_xz and pos.y >= height_at_xz - 2) then
+			-- 	data[i] = (is_sandy and c_sand) or c_dirt
+			-- else
+			if (pos.y < height_at_xz) then
 				if (not stone_disabled) then
-					local is_sandstone = height_at_xz <= ocean_level + 3 and pos.y >= height_at_xz - 7
+					-- local is_sandstone = height_at_xz <= ocean_level + 3 and pos.y >= height_at_xz - 7
 
-					if (is_sandstone) then
-						data[i] = c_sandstone
-					else
-						data[i] = c_stone
-					end
+					-- if (is_sandstone) then
+					-- 	data[i] = c_sandstone
+					-- else
+					data[i] = c_stone
+					-- end
 				end
 			end
 
@@ -159,12 +160,10 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 		if (pos.y <= 160) then
 			local hit = false
 
-			-- Big caves.
-			if big_cave_noise[index] > 0.5 then
-				data[i] = c_air
-				hit = true
-			elseif -- Small caves. (Terrain accentuation)
-				small_cave_noise[index] > 0.55 then
+			local average_noise = (big_cave_noise[index] + small_cave_noise[index]) / 2
+
+
+			if average_noise > 0.3 then
 				data[i] = c_air
 				hit = true
 			end
@@ -185,22 +184,24 @@ core.register_on_generated(function(voxmanip, minp, maxp, blockseed)
 			end
 		end
 
+		-- todo: generate water without this nonsense, then do a flood fill afterwards
+
 		-- Water generation.
 		-- This is shaky at best and produces weird results along with flooding.
-		if (
-				pos.y <= ocean_level and
-				pos.y >= 0 and
-				data[i] == c_air
-			) then
-			-- Try not to go too deep into a cave.
-			-- Don't flood all the above 0 Y caves.
-			if (
-					pos.y >= height_at_xz - 3 or
-					pos.y == ocean_level and height_at_xz < pos.y + 20
-				) then
-				data[i] = c_water_source
-			end
-		end
+		-- if (
+		-- 		pos.y <= ocean_level and
+		-- 		pos.y >= 0 and
+		-- 		data[i] == c_air
+		-- 	) then
+		-- 	-- Try not to go too deep into a cave.
+		-- 	-- Don't flood all the above 0 Y caves.
+		-- 	if (
+		-- 			pos.y >= height_at_xz - 3 or
+		-- 			pos.y == ocean_level and height_at_xz < pos.y + 20
+		-- 		) then
+		-- 		data[i] = c_water_source
+		-- 	end
+		-- end
 
 
 		-- if value_noise_3d[index] > 0.1 then
