@@ -1,6 +1,29 @@
 # cavegame
  cave game
 
+# 0.0.4 - More world things.
+
+shrub spawns on sand
+
+add pumpkin
+
+pumpkin spawns on grass
+
+jackolantern by right clicking pumpkin with sword
+
+dirt can spawn as ore in ground
+
+gravel can spawn as ore in ground
+
+sand can spawn as ore in ground
+
+water can spawn as ore in the ground
+
+add lava
+
+lava can spawn in pockets on the surface as lava pools
+
+lava can spawn in the ground
 
 # 0.0.3 - Tool update.
 
